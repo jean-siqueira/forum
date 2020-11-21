@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import br.com.alura.forum.repository.UsuarioRepository;
 import br.com.alura.forum.security.TokenService;
 
 @EnableWebSecurity
@@ -23,9 +24,11 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
     @Autowired
     private AutenticacaoService autenticacaoService;
 
-
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private UsuarioRepository repository;
 
     @Override
     @Bean
@@ -49,7 +52,7 @@ public class SecurityConfigurations extends WebSecurityConfigurerAdapter {
            .anyRequest().authenticated()
            .and().csrf().disable() //desabilita a avalidação de ataque crossdomain
            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)//cria uma sessão sem estado
-           .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService), UsernamePasswordAuthenticationFilter.class); //define a ordem de utilização dos filtros
+           .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, repository), UsernamePasswordAuthenticationFilter.class); //define a ordem de utilização dos filtros
 
     }
 
